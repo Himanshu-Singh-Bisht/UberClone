@@ -3,6 +3,7 @@ package com.himanshu.uberclone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
@@ -57,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(ParseUser.getCurrentUser() != null)
         {
-            // transition
-            ParseUser.logOut();
+            //ParseUser.logOut();
+            transitionToPassengerActivity();
         }
     }
 
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(e == null)
                             {
                                 Toast.makeText(MainActivity.this , "Signed Up!"  , Toast.LENGTH_SHORT).show();
+                                transitionToPassengerActivity();        // to transition to passenger activity
                             }
                         }
                     });
@@ -135,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(user != null && e == null)
                             {
                                 Toast.makeText(MainActivity.this , "User Logged In!" , Toast.LENGTH_SHORT).show();
+                                transitionToPassengerActivity();            // to transition to passenger activity
                             }
                             else if(user == null)
                             {
@@ -165,7 +169,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     Toast.makeText(MainActivity.this , "We have an anonymous User" , Toast.LENGTH_SHORT).show();
 
                                     user.put("as" , edtDriverOrPassenger.getText().toString());
-                                    user.saveInBackground();
+                                    user.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if(e == null)
+                                            {
+                                                transitionToPassengerActivity();            // to transition to passenger activity
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -176,6 +188,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(MainActivity.this , "" , Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+
+    // Method to transition to passenger activity.
+    private void transitionToPassengerActivity()
+    {
+        if(ParseUser.getCurrentUser() != null)
+        {
+            if(ParseUser.getCurrentUser().get("as").equals("Passenger"))
+            {
+                Intent intent = new Intent(MainActivity.this , PassengerActivity.class);
+                startActivity(intent);
+            }
         }
     }
 }
