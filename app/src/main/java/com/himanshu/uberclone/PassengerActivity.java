@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -74,6 +75,21 @@ public class PassengerActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
+        Button btnLogoutFromPassenger = findViewById(R.id.btnLogoutFromPassenger);
+        btnLogoutFromPassenger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser.logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null)
+                        {
+                            finish();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     /**

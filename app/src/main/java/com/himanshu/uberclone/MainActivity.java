@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             //ParseUser.logOut();
             transitionToPassengerActivity();
+            transitionToDriverRequestListActivity();
         }
     }
 
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             {
                                 Toast.makeText(MainActivity.this , "Signed Up!"  , Toast.LENGTH_SHORT).show();
                                 transitionToPassengerActivity();        // to transition to passenger activity
+                                transitionToDriverRequestListActivity();       // to transition to Driver Request List Activity.
                             }
                         }
                     });
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             {
                                 Toast.makeText(MainActivity.this , "User Logged In!" , Toast.LENGTH_SHORT).show();
                                 transitionToPassengerActivity();            // to transition to passenger activity
+                                transitionToDriverRequestListActivity();       // to transition to Driver Request List Activity.
                             }
                             else if(user == null)
                             {
@@ -175,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             if(e == null)
                                             {
                                                 transitionToPassengerActivity();            // to transition to passenger activity
+                                                transitionToDriverRequestListActivity();       // to transition to Driver Request List Activity.
                                             }
                                         }
                                     });
@@ -199,6 +203,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(ParseUser.getCurrentUser().get("as").equals("Passenger"))
             {
                 Intent intent = new Intent(MainActivity.this , PassengerActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
+
+    // Method to transition to driver request List Activity
+    private void transitionToDriverRequestListActivity()
+    {
+        if(ParseUser.getCurrentUser() != null)
+        {
+            if(ParseUser.getCurrentUser().get("as").equals("Driver"))
+            {
+                Intent intent = new Intent(this , DriverRequestListActivity.class);
                 startActivity(intent);
             }
         }
