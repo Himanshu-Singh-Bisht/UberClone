@@ -149,6 +149,7 @@ public class PassengerActivity extends FragmentActivity implements OnMapReadyCal
 //                return;
 //            }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
         }
         else if(Build.VERSION.SDK_INT >= 23)        // then permission is required.
         {
