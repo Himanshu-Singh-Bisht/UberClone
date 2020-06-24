@@ -59,7 +59,7 @@ public class ViewLocationMapActivity extends FragmentActivity implements OnMapRe
                     public void done(List<ParseObject> objects, ParseException e) {
                         if(objects.size() > 0 && e == null)
                         {
-                            for(ParseObject uberRequest : objects)
+                            for(final ParseObject uberRequest : objects)
                             {
                                 uberRequest.put("driverOfMe" , ParseUser.getCurrentUser().getUsername());
                                 uberRequest.saveInBackground(new SaveCallback() {
@@ -67,6 +67,7 @@ public class ViewLocationMapActivity extends FragmentActivity implements OnMapRe
                                     public void done(ParseException e) {
                                         if(e == null)
                                         {
+                                            uberRequest.put("requestAccepted" , true);
                                             // Intent to go to google Maps activity(when driver gives ride to passenger).
                                             Intent googleIntent = new Intent(Intent.ACTION_VIEW , Uri.parse("http://maps.google.com/maps?saddr=" +
                                                     getIntent().getDoubleExtra("dLatitude" , 0) + "," +

@@ -33,6 +33,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,27 +82,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements View
         if(Build.VERSION.SDK_INT < 23 ||
                 ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
-            locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 0 , 0 , locationListener);
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            };
+            initializeTheLocationListener();
         }
     }
 
@@ -174,6 +155,8 @@ public class DriverRequestListActivity extends AppCompatActivity implements View
             if(ContextCompat.checkSelfPermission(DriverRequestListActivity.this ,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
+                initializeTheLocationListener();        // needed to initialise the location listener otherwise its value will be null.
+
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
 
@@ -192,6 +175,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements View
     {
         if(driverLocation != null)
         {
+            saveDriverLocationToParse(driverLocation); // saving the location of driver to parse.
 
             final ParseGeoPoint driverCurrentLocation = new ParseGeoPoint(driverLocation.getLatitude() , driverLocation.getLongitude());
 
@@ -277,5 +261,52 @@ public class DriverRequestListActivity extends AppCompatActivity implements View
                 startActivity(intent);
             }
         }
+    }
+
+
+
+    private void initializeTheLocationListener()
+    {
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER , 0 , 0 , locationListener);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+    }
+
+
+
+    private void saveDriverLocationToParse(Location location)
+    {
+        ParseUser driver = ParseUser.getCurrentUser();
+
+        ParseGeoPoint driverLocation = new ParseGeoPoint(location.getLatitude() , location.getLongitude());
+        driver.put("driverLocation" , driverLocation);
+
+        driver.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null)
+                {
+                    Toast.makeText(DriverRequestListActivity.this , "Location Saved" , Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
